@@ -37,6 +37,32 @@ class SessionService:
             raise AppError(ERROR_SESSION_NOT_FOUND, "Session not found", 404, {"session_id": session_id})
         return self._row_to_session(row)
 
+    async def get_session_by_id(self, session_id: str) -> Session | None:
+        cursor = await self.db.execute(
+            "SELECT * FROM sessions WHERE id = ?",
+            (session_id,),
+        )
+        row = await cursor.fetchone()
+        if row is None:
+            return None
+        return self._row_to_session(row)
+
+    async def add_message(
+        self,
+        session_id: str,
+        role: str,
+        content: str,
+        products_json: str | None = None,
+        tool_calls_json: str | None = None,
+        tool_call_id: str | None = None,
+    ) -> None:
+        message_id = f"m_{uuid4().hex}"
+        await self.db.execute(
+            "INSERT INTO messages (id, session_id, role, content, products_json, tool_calls_json, tool_call_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (message_id, session_id, role, content, products_json, tool_calls_json, tool_call_id),
+        )
+        await self.db.commit()
+
     async def update_session(
         self,
         user_id: str,

@@ -1,0 +1,195 @@
+[
+  {
+    "query": "适合跑步的鞋",
+    "kwargs": {
+      "category": "服饰运动",
+      "top_k": 5
+    },
+    "count": 4,
+    "items": [
+      {
+        "sub": "跑步鞋",
+        "price": 899.0,
+        "title": "Nike Air Zoom Pegasus 41 男子缓震跑步鞋日常训练公路跑鞋"
+      },
+      {
+        "sub": "跑步鞋",
+        "price": 999.0,
+        "title": "特步 160X 6.0 PRO 碳板竞速跑鞋马拉松训练比赛轻量跑步鞋"
+      },
+      {
+        "sub": "跑步鞋",
+        "price": 1399.0,
+        "title": "adidas Ultraboost 5 男子缓震跑步鞋针织鞋面日常慢跑训练鞋"
+      },
+      {
+        "sub": "跑步鞋",
+        "price": 1099.0,
+        "title": "HOKA Clifton 9 男子缓震公路跑鞋厚底回弹日常长距离训练鞋"
+      }
+    ]
+  },
+  {
+    "query": "1500以内跑步鞋",
+    "kwargs": {
+      "category": "服饰运动",
+      "price_max": 1500,
+      "top_k": 5
+    },
+    "count": 4,
+    "items": [
+      {
+        "sub": "跑步鞋",
+        "price": 999.0,
+        "title": "特步 160X 6.0 PRO 碳板竞速跑鞋马拉松训练比赛轻量跑步鞋"
+      },
+      {
+        "sub": "跑步鞋",
+        "price": 1099.0,
+        "title": "HOKA Clifton 9 男子缓震公路跑鞋厚底回弹日常长距离训练鞋"
+      },
+      {
+        "sub": "跑步鞋",
+        "price": 899.0,
+        "title": "Nike Air Zoom Pegasus 41 男子缓震跑步鞋日常训练公路跑鞋"
+      },
+      {
+        "sub": "跑步鞋",
+        "price": 1399.0,
+        "title": "adidas Ultraboost 5 男子缓震跑步鞋针织鞋面日常慢跑训练鞋"
+      }
+    ]
+  },
+  {
+    "query": "800以内跑步鞋",
+    "kwargs": {
+      "category": "服饰运动",
+      "price_max": 800,
+      "top_k": 5
+    },
+    "count": 0,
+    "items": []
+  },
+  {
+    "query": "便宜跑步装备",
+    "kwargs": {
+      "category": "服饰运动",
+      "price_max": 800,
+      "top_k": 5
+    },
+    "count": 5,
+    "items": [
+      {
+        "sub": "速干T恤",
+        "price": 79.0,
+        "title": "迪卡侬 KALENJI 男子跑步速干T恤轻薄透气基础训练短袖上衣"
+      },
+      {
+        "sub": "短袖T恤",
+        "price": 199.0,
+        "title": "Nike Dri-FIT 男子训练短袖T恤 速干透气运动上衣"
+      },
+      {
+        "sub": "运动短裤",
+        "price": 149.0,
+        "title": "优衣库 男装 DRY 速干运动短裤 轻薄透气训练裤"
+      },
+      {
+        "sub": "速干T恤",
+        "price": 249.0,
+        "title": "Nike Dri-FIT Miler 男子速干短袖跑步上衣轻薄透气公路训练T恤"
+      },
+      {
+        "sub": "短袖T恤",
+        "price": 129.0,
+        "title": "优衣库 DRY-EX 超快干圆领短袖T恤 男装 运动训练上衣"
+      }
+    ]
+  },
+  {
+    "query": "推荐蓝牙降噪耳机",
+    "kwargs": {
+      "category": "数码电子",
+      "top_k": 5
+    },
+    "count": 5,
+    "items": [
+      {
+        "sub": "真无线耳机",
+        "price": 1699.0,
+        "title": "华为HUAWEI FreeBuds Pro 5 主动降噪真无线蓝牙耳机高解析音质"
+      },
+      {
+        "sub": "真无线耳机",
+        "price": 1899.0,
+        "title": "Apple AirPods Pro 3 主动降噪真无线蓝牙耳机 心率监测版"
+      },
+      {
+        "sub": "平板电脑",
+        "price": 4999.0,
+        "title": "华为HUAWEI MatePad Pro Max 12.6英寸高刷屏多任务办公平板电脑"
+      },
+      {
+        "sub": "笔记本电脑",
+        "price": 8499.0,
+        "title": "Apple MacBook Air 13英寸 M5 芯片 16GB 512GB 轻薄便携笔记本电脑"
+      },
+      {
+        "sub": "智能手机",
+        "price": 6999.0,
+        "title": "华为HUAWEI Pura 90 Pro 超感光影像曲面屏轻薄旗舰手机12+256GB"
+      }
+    ]
+  },
+  {
+    "query": "推荐控油精华",
+    "kwargs": {
+      "category": "美妆护肤",
+      "top_k": 5
+    },
+    "count": 5,
+    "items": [
+      {
+        "sub": "精华",
+        "price": 59.0,
+        "title": "The Ordinary烟酰胺10%锌1%精华液平衡油脂淡化毛孔提亮肤色30ml"
+      },
+      {
+        "sub": "精华",
+        "price": 300.0,
+        "title": "珀莱雅赋能鲜颜淡纹紧致精华液抗皱紧致提升弹润淡化细纹30ml"
+      },
+      {
+        "sub": "蜜粉",
+        "price": 99.0,
+        "title": "方里柔焦蜜粉饼控油定妆细腻粉质隐匿毛孔提亮肤色粉饼7g"
+      },
+      {
+        "sub": "精华",
+        "price": 590.0,
+        "title": "资生堂新红妍肌活精华露红腰子修护维稳强韧肌底精华50ml"
+      },
+      {
+        "sub": "粉底液",
+        "price": 440.0,
+        "title": "雅诗兰黛持妆粉底液SPF10PA持久遮瑕控油抗汗清透底妆30ml"
+      }
+    ]
+  },
+  {
+    "query": "20元以内方便食品",
+    "kwargs": {
+      "category": "食品饮料",
+      "price_max": 20,
+      "top_k": 5
+    },
+    "count": 1,
+    "items": [
+      {
+        "sub": "方便食品",
+        "price": 18.9,
+        "title": "康师傅 红烧牛肉面 方便面袋装 114g×5 袋 五连包整袋"
+      }
+    ]
+  }
+]

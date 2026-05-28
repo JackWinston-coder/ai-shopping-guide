@@ -1,0 +1,23 @@
+{
+  "name": "ai-shopping-guide",
+  "version": "0.1.0",
+  "private": true,
+  "description": "RAG-based multimodal ecommerce shopping guide demo.",
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:client": "npm run dev -w client",
+    "dev:server": "npm run dev -w server",
+    "start:server": "npm run start -w server",
+    "lint": "npm run lint --workspaces --if-present",
+    "check": "npm run check --workspaces --if-present"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "dotenv": "^17.4.2",
+    "playwright": "^1.60.0"
+  }
+}

@@ -1,0 +1,299 @@
+[
+  {
+    "query": "适合油皮的护肤品",
+    "kwargs": {
+      "category": "美妆护肤",
+      "top_k": 5
+    },
+    "count": 5,
+    "items": [
+      {
+        "id": "p_beauty_018",
+        "sub": "精华",
+        "title": "The Ordinary烟酰胺10%锌1%精华液平衡油脂淡化毛孔提亮肤色30ml",
+        "price": 59.0,
+        "score": 0.5753
+      },
+      {
+        "id": "p_beauty_020",
+        "sub": "粉底液",
+        "title": "雅诗兰黛持妆粉底液SPF10PA持久遮瑕控油抗汗清透底妆30ml",
+        "price": 440.0,
+        "score": 0.5617
+      },
+      {
+        "id": "p_beauty_009",
+        "sub": "精华",
+        "title": "珀莱雅弹润透亮青春精华液双抗精华提亮肤色淡纹保湿精华50ml",
+        "price": 280.0,
+        "score": 0.5277
+      },
+      {
+        "id": "p_beauty_003",
+        "sub": "化妆水",
+        "title": "SK-II护肤精华露神仙水晶透保湿调理角质收缩毛孔230ml",
+        "price": 1690.0,
+        "score": 0.5057
+      },
+      {
+        "id": "p_beauty_022",
+        "sub": "面膜",
+        "title": "薇诺娜极润保湿面膜密集补水舒缓修护肌肤屏障涂抹式面膜75g",
+        "price": 199.0,
+        "score": 0.5016
+      }
+    ]
+  },
+  {
+    "query": "推荐控油精华",
+    "kwargs": {
+      "category": "美妆护肤",
+      "top_k": 5
+    },
+    "count": 5,
+    "items": [
+      {
+        "id": "p_beauty_018",
+        "sub": "精华",
+        "title": "The Ordinary烟酰胺10%锌1%精华液平衡油脂淡化毛孔提亮肤色30ml",
+        "price": 59.0,
+        "score": 0.6614
+      },
+      {
+        "id": "p_beauty_024",
+        "sub": "精华",
+        "title": "珀莱雅赋能鲜颜淡纹紧致精华液抗皱紧致提升弹润淡化细纹30ml",
+        "price": 300.0,
+        "score": 0.5616
+      },
+      {
+        "id": "p_beauty_013",
+        "sub": "蜜粉",
+        "title": "方里柔焦蜜粉饼控油定妆细腻粉质隐匿毛孔提亮肤色粉饼7g",
+        "price": 99.0,
+        "score": 0.5594
+      },
+      {
+        "id": "p_beauty_004",
+        "sub": "精华",
+        "title": "资生堂新红妍肌活精华露红腰子修护维稳强韧肌底精华50ml",
+        "price": 590.0,
+        "score": 0.5383
+      },
+      {
+        "id": "p_beauty_020",
+        "sub": "粉底液",
+        "title": "雅诗兰黛持妆粉底液SPF10PA持久遮瑕控油抗汗清透底妆30ml",
+        "price": 440.0,
+        "score": 0.5359
+      }
+    ]
+  },
+  {
+    "query": "有什么缺点的耳机",
+    "kwargs": {
+      "category": "数码电子",
+      "top_k": 5
+    },
+    "count": 5,
+    "items": [
+      {
+        "id": "p_digital_018",
+        "sub": "真无线耳机",
+        "title": "Apple AirPods Pro 3 主动降噪真无线蓝牙耳机 心率监测版",
+        "price": 1899.0,
+        "score": 0.5713
+      },
+      {
+        "id": "p_digital_007",
+        "sub": "真无线耳机",
+        "title": "华为HUAWEI FreeBuds Pro 5 主动降噪真无线蓝牙耳机高解析音质",
+        "price": 1699.0,
+        "score": 0.5677
+      },
+      {
+        "id": "p_digital_002",
+        "sub": "智能手机",
+        "title": "华为HUAWEI Pura 90 Pro 超感光影像曲面屏轻薄旗舰手机12+256GB",
+        "price": 6999.0,
+        "score": 0.495
+      },
+      {
+        "id": "p_digital_013",
+        "sub": "平板电脑",
+        "title": "Apple iPad Pro 13英寸 (M5) Liquid视网膜 XDR 显示屏 256GB Wi‑Fi 平板电脑",
+        "price": 8999.0,
+        "score": 0.4803
+      },
+      {
+        "id": "p_digital_003",
+        "sub": "智能手机",
+        "title": "Apple iPhone 17 Pro Max 6.9英寸 A19 Pro 256GB 大屏旗舰手机",
+        "price": 9999.0,
+        "score": 0.4721
+      }
+    ]
+  },
+  {
+    "query": "推荐蓝牙降噪耳机",
+    "kwargs": {
+      "category": "数码电子",
+      "top_k": 5
+    },
+    "count": 5,
+    "items": [
+      {
+        "id": "p_digital_007",
+        "sub": "真无线耳机",
+        "title": "华为HUAWEI FreeBuds Pro 5 主动降噪真无线蓝牙耳机高解析音质",
+        "price": 1699.0,
+        "score": 0.6026
+      },
+      {
+        "id": "p_digital_018",
+        "sub": "真无线耳机",
+        "title": "Apple AirPods Pro 3 主动降噪真无线蓝牙耳机 心率监测版",
+        "price": 1899.0,
+        "score": 0.5905
+      },
+      {
+        "id": "p_digital_005",
+        "sub": "平板电脑",
+        "title": "华为HUAWEI MatePad Pro Max 12.6英寸高刷屏多任务办公平板电脑",
+        "price": 4999.0,
+        "score": 0.3959
+      },
+      {
+        "id": "p_digital_020",
+        "sub": "笔记本电脑",
+        "title": "Apple MacBook Air 13英寸 M5 芯片 16GB 512GB 轻薄便携笔记本电脑",
+        "price": 8499.0,
+        "score": 0.3472
+      },
+      {
+        "id": "p_digital_002",
+        "sub": "智能手机",
+        "title": "华为HUAWEI Pura 90 Pro 超感光影像曲面屏轻薄旗舰手机12+256GB",
+        "price": 6999.0,
+        "score": 0.3226
+      }
+    ]
+  },
+  {
+    "query": "适合跑步的鞋",
+    "kwargs": {
+      "category": "服饰运动",
+      "price_max": 800,
+      "top_k": 5
+    },
+    "count": 0,
+    "items": []
+  },
+  {
+    "query": "推荐跑步鞋",
+    "kwargs": {
+      "category": "服饰运动",
+      "top_k": 5
+    },
+    "count": 4,
+    "items": [
+      {
+        "id": "p_clothes_010",
+        "sub": "跑步鞋",
+        "title": "特步 160X 6.0 PRO 碳板竞速跑鞋马拉松训练比赛轻量跑步鞋",
+        "price": 999.0,
+        "score": 0.6236
+      },
+      {
+        "id": "p_clothes_009",
+        "sub": "跑步鞋",
+        "title": "HOKA Clifton 9 男子缓震公路跑鞋厚底回弹日常长距离训练鞋",
+        "price": 1099.0,
+        "score": 0.5889
+      },
+      {
+        "id": "p_clothes_008",
+        "sub": "跑步鞋",
+        "title": "adidas Ultraboost 5 男子缓震跑步鞋针织鞋面日常慢跑训练鞋",
+        "price": 1399.0,
+        "score": 0.5363
+      },
+      {
+        "id": "p_clothes_007",
+        "sub": "跑步鞋",
+        "title": "Nike Air Zoom Pegasus 41 男子缓震跑步鞋日常训练公路跑鞋",
+        "price": 899.0,
+        "score": 0.5356
+      }
+    ]
+  },
+  {
+    "query": "800以内跑步鞋",
+    "kwargs": {
+      "category": "服饰运动",
+      "price_max": 800,
+      "top_k": 5
+    },
+    "count": 0,
+    "items": []
+  },
+  {
+    "query": "推荐咖啡",
+    "kwargs": {
+      "category": "食品饮料",
+      "exclude_keywords": [
+        "酸奶"
+      ],
+      "top_k": 5
+    },
+    "count": 4,
+    "items": [
+      {
+        "id": "p_food_001",
+        "sub": "咖啡",
+        "title": "三顿半 数字星球系列 超即溶精品咖啡1-6号 18颗装精品速溶咖啡",
+        "price": 138.0,
+        "score": 0.6291
+      },
+      {
+        "id": "p_food_022",
+        "sub": "咖啡",
+        "title": "三顿半 冷萃超即溶 黑咖啡 6颗装 冷泡即溶精品速溶咖啡",
+        "price": 58.0,
+        "score": 0.5427
+      },
+      {
+        "id": "p_food_002",
+        "sub": "咖啡",
+        "title": "雀巢咖啡 1+2原味 三合一速溶咖啡粉100条装即冲奶香咖啡饮品",
+        "price": 60.0,
+        "score": 0.5295
+      },
+      {
+        "id": "p_food_023",
+        "sub": "咖啡",
+        "title": "雀巢 金牌 冻干速溶咖啡 100g 瓶装 黑咖啡",
+        "price": 42.0,
+        "score": 0.5028
+      }
+    ]
+  },
+  {
+    "query": "低价方便食品",
+    "kwargs": {
+      "category": "食品饮料",
+      "price_max": 20,
+      "top_k": 5
+    },
+    "count": 1,
+    "items": [
+      {
+        "id": "p_food_021",
+        "sub": "方便食品",
+        "title": "康师傅 红烧牛肉面 方便面袋装 114g×5 袋 五连包整袋",
+        "price": 18.9,
+        "score": 0.5151
+      }
+    ]
+  }
+]

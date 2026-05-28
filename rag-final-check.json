@@ -1,0 +1,38 @@
+[
+  {
+    "query": "适合跑步的鞋",
+    "count": 0,
+    "items": []
+  },
+  {
+    "query": "推荐跑步鞋",
+    "count": 4,
+    "items": [
+      "特步 160X 6.0 PRO 碳板竞速跑鞋马拉松训练比赛轻量跑步鞋",
+      "HOKA Clifton 9 男子缓震公路跑鞋厚底回弹日常长距离训练鞋",
+      "adidas Ultraboost 5 男子缓震跑步鞋针织鞋面日常慢跑训练鞋",
+      "Nike Air Zoom Pegasus 41 男子缓震跑步鞋日常训练公路跑鞋"
+    ]
+  },
+  {
+    "query": "有什么缺点的耳机",
+    "count": 5,
+    "items": [
+      "Apple AirPods Pro 3 主动降噪真无线蓝牙耳机 心率监测版",
+      "华为HUAWEI FreeBuds Pro 5 主动降噪真无线蓝牙耳机高解析音质",
+      "华为HUAWEI Pura 90 Pro 超感光影像曲面屏轻薄旗舰手机12+256GB",
+      "Apple iPad Pro 13英寸 (M5) Liquid视网膜 XDR 显示屏 256GB Wi‑Fi 平板电脑",
+      "Apple iPhone 17 Pro Max 6.9英寸 A19 Pro 256GB 大屏旗舰手机"
+    ]
+  },
+  {
+    "query": "推荐咖啡",
+    "count": 4,
+    "items": [
+      "三顿半 数字星球系列 超即溶精品咖啡1-6号 18颗装精品速溶咖啡",
+      "三顿半 冷萃超即溶 黑咖啡 6颗装 冷泡即溶精品速溶咖啡",
+      "雀巢咖啡 1+2原味 三合一速溶咖啡粉100条装即冲奶香咖啡饮品",
+      "雀巢 金牌 冻干速溶咖啡 100g 瓶装 黑咖啡"
+    ]
+  }
+]

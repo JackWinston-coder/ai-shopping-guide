@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+data/app.db
+data/chroma/
+node_modules/
+dist/
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,90 @@
+{
+  "count": 728,
+  "results": [
+    {
+      "query": "适合油皮的护肤品",
+      "items": [
+        {
+          "product_id": "p_beauty_018",
+          "title": "The Ordinary烟酰胺10%锌1%精华液平衡油脂淡化毛孔提亮肤色30ml",
+          "category": "美妆护肤",
+          "score": 0.5753
+        },
+        {
+          "product_id": "p_beauty_020",
+          "title": "雅诗兰黛持妆粉底液SPF10PA持久遮瑕控油抗汗清透底妆30ml",
+          "category": "美妆护肤",
+          "score": 0.5617
+        },
+        {
+          "product_id": "p_beauty_009",
+          "title": "珀莱雅弹润透亮青春精华液双抗精华提亮肤色淡纹保湿精华50ml",
+          "category": "美妆护肤",
+          "score": 0.5277
+        },
+        {
+          "product_id": "p_beauty_003",
+          "title": "SK-II护肤精华露神仙水晶透保湿调理角质收缩毛孔230ml",
+          "category": "美妆护肤",
+          "score": 0.5057
+        },
+        {
+          "product_id": "p_beauty_022",
+          "title": "薇诺娜极润保湿面膜密集补水舒缓修护肌肤屏障涂抹式面膜75g",
+          "category": "美妆护肤",
+          "score": 0.5016
+        }
+      ]
+    },
+    {
+      "query": "有什么缺点的耳机",
+      "items": [
+        {
+          "product_id": "p_digital_018",
+          "title": "Apple AirPods Pro 3 主动降噪真无线蓝牙耳机 心率监测版",
+          "category": "数码电子",
+          "score": 0.5713
+        },
+        {
+          "product_id": "p_digital_007",
+          "title": "华为HUAWEI FreeBuds Pro 5 主动降噪真无线蓝牙耳机高解析音质",
+          "category": "数码电子",
+          "score": 0.5677
+        },
+        {
+          "product_id": "p_digital_013",
+          "title": "Apple iPad Pro 13英寸 (M5) Liquid视网膜 XDR 显示屏 256GB Wi‑Fi 平板电脑",
+          "category": "数码电子",
+          "score": 0.4803
+        }
+      ]
+    },
+    {
+      "query": "适合跑步的鞋",
+      "items": []
+    },
+    {
+      "query": "推荐咖啡",
+      "items": [
+        {
+          "product_id": "p_food_001",
+          "title": "三顿半 数字星球系列 超即溶精品咖啡1-6号 18颗装精品速溶咖啡",
+          "category": "食品饮料",
+          "score": 0.6291
+        },
+        {
+          "product_id": "p_food_022",
+          "title": "三顿半 冷萃超即溶 黑咖啡 6颗装 冷泡即溶精品速溶咖啡",
+          "category": "食品饮料",
+          "score": 0.5427
+        },
+        {
+          "product_id": "p_food_002",
+          "title": "雀巢咖啡 1+2原味 三合一速溶咖啡粉100条装即冲奶香咖啡饮品",
+          "category": "食品饮料",
+          "score": 0.5295
+        }
+      ]
+    }
+  ]
+}

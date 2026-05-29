@@ -23,20 +23,24 @@ from server.errors import AppError, app_error_handler, http_error_handler
 
 _correlation_id_var: ContextVar[str] = ContextVar("correlation_id", default="-")
 
+_logging_format = "%(asctime)s %(levelname)s [%(correlation_id)s] %(name)s: %(message)s"
+
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s %(levelname)s [%(correlation_id)s] %(name)s: %(message)s",
+    format=_logging_format,
     stream=sys.stdout,
 )
 
-
-class CorrelationIdFilter(logging.Filter):
-    def filter(self, record):
-        record.correlation_id = _correlation_id_var.get("-")
-        return True
+_old_record_factory = logging.getLogRecordFactory()
 
 
-logging.getLogger().addFilter(CorrelationIdFilter())
+def _record_factory(*args, **kwargs):
+    record = _old_record_factory(*args, **kwargs)
+    record.correlation_id = _correlation_id_var.get("-")
+    return record
+
+
+logging.setLogRecordFactory(_record_factory)
 logger = logging.getLogger(__name__)
 
 

@@ -153,7 +153,7 @@ class RagService:
 
         for chunk in chunks:
             self.retriever.register_chunk(
-                chunk.chunk_id,
+                chunk.id,
                 chunk.text,
                 {
                     "product_id": chunk.product_id,

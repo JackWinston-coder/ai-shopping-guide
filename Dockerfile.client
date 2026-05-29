@@ -3,7 +3,7 @@ FROM node:20-alpine AS base
 WORKDIR /app
 
 COPY client/package.json client/pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+RUN npm config set registry https://registry.npmmirror.com && npm install -g pnpm && pnpm install
 
 COPY client/ ./
 
@@ -15,6 +15,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_API_URL=http://localhost:8000
 
 COPY --from=base /app/next.config.mjs ./
 COPY --from=base /app/public ./public

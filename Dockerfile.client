@@ -15,7 +15,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV NEXT_PUBLIC_API_URL=http://localhost:8000
+ENV NEXT_PUBLIC_API_URL=http://123.207.251.110:8000
 
 COPY --from=base /app/next.config.mjs ./
 COPY --from=base /app/public ./public

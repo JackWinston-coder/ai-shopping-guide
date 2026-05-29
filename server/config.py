@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     local_embedding_dimensions: int = 256
     jwt_secret: str = "change-me-in-production"
     jwt_expire_days: int = 7
-    cors_origins: str = "http://localhost:3000"
+    cors_origins: str = "http://localhost:3000,http://123.207.251.110:3000"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

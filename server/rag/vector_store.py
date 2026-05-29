@@ -21,8 +21,9 @@ class VectorStore:
     def reset(self) -> None:
         try:
             self.client.delete_collection(COLLECTION_NAME)
-        except Exception:
-            pass
+        except Exception as exc:
+            if "does not exist" not in str(exc).lower():
+                raise
         self.collection = self.client.get_or_create_collection(
             name=COLLECTION_NAME,
             metadata={"hnsw:space": "cosine"},
@@ -50,4 +51,3 @@ class VectorStore:
 
     def count(self) -> int:
         return self.collection.count()
-

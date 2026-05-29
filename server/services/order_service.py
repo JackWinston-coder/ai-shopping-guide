@@ -39,7 +39,6 @@ class OrderService:
             for item in preview["items"]
         ]
         try:
-            await self.db.execute("BEGIN")
             await self.db.execute(
                 """
                 INSERT INTO orders (id, order_no, user_id, items_json, total_price, address, status)

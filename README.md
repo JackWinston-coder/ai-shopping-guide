@@ -28,4 +28,4 @@ docker/      Docker 与部署配置
 
 ## 当前阶段
 
-Milestone 5：Agent 层 + Chat API。
+Milestone 6：前后端联调 + 多模态。

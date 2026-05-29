@@ -9,24 +9,39 @@ from server.services.product_service import ProductService
 logger = logging.getLogger(__name__)
 
 
+def _get_product_service(product_service: ProductService | None, context: ConversationContext | None = None) -> ProductService:
+    if product_service is not None:
+        return product_service
+    if context is not None and context.product_service is not None:
+        return context.product_service
+    return ProductService()
+
+
+async def _get_order_service(order_service: OrderService | None, product_service: ProductService | None, context: ConversationContext | None = None) -> OrderService | None:
+    if order_service is not None:
+        return order_service
+    if context is not None and context.order_service is not None:
+        return context.order_service
+    from server.db.database import _db_connection
+    if _db_connection is None:
+        return None
+    return OrderService(_db_connection, _get_product_service(product_service, context))
+
+
 async def order_preview(
     address: str | None = None,
     context: ConversationContext | None = None,
     order_service: OrderService | None = None,
     product_service: ProductService | None = None,
 ) -> dict:
-    if product_service is None:
-        from server.api.deps import get_product_service
-        product_service = get_product_service()
-    if order_service is None:
-        from server.db.database import _db_connection
-        if _db_connection is None:
-            return {"success": False, "error": "数据库未连接"}
-        order_service = OrderService(_db_connection, product_service)
+    ps = _get_product_service(product_service, context)
+    os = await _get_order_service(order_service, ps, context)
+    if os is None:
+        return {"success": False, "error": "数据库未连接"}
     if context is None:
         return {"success": False, "error": "缺少上下文"}
     try:
-        preview = await order_service.preview(context.user_id)
+        preview = await os.preview(context.user_id)
         return {
             "success": True,
             "items": [
@@ -53,18 +68,14 @@ async def order_create(
     order_service: OrderService | None = None,
     product_service: ProductService | None = None,
 ) -> dict:
-    if product_service is None:
-        from server.api.deps import get_product_service
-        product_service = get_product_service()
-    if order_service is None:
-        from server.db.database import _db_connection
-        if _db_connection is None:
-            return {"success": False, "error": "数据库未连接"}
-        order_service = OrderService(_db_connection, product_service)
+    ps = _get_product_service(product_service, context)
+    os = await _get_order_service(order_service, ps, context)
+    if os is None:
+        return {"success": False, "error": "数据库未连接"}
     if context is None:
         return {"success": False, "error": "缺少上下文"}
     try:
-        order = await order_service.create_order(context.user_id, address)
+        order = await os.create_order(context.user_id, address)
         return {
             "success": True,
             "order_id": order.id,

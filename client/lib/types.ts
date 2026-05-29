@@ -40,10 +40,12 @@ export interface Message {
   timestamp: string
   products?: Product[]
   isStreaming?: boolean
+  toolResults?: unknown[]
 }
 
 export interface ChatSession {
   id: string
+  serverSessionId?: string
   title: string
   preview: string
   timestamp: string

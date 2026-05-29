@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 from server.models.product import Product
@@ -37,6 +39,30 @@ class ProductChunker:
                 )
             )
 
+        spec_text = self._build_spec_text(product)
+        if spec_text:
+            chunks.append(
+                ProductChunk(
+                    id=f"{product.product_id}:spec",
+                    product_id=product.product_id,
+                    chunk_type="spec",
+                    text=f"{product.title}\n{spec_text}",
+                    metadata={**base_metadata, "chunk_type": "spec"},
+                )
+            )
+
+        sku_text = self._build_sku_text(product)
+        if sku_text:
+            chunks.append(
+                ProductChunk(
+                    id=f"{product.product_id}:sku",
+                    product_id=product.product_id,
+                    chunk_type="sku",
+                    text=f"{product.title}\n{sku_text}",
+                    metadata={**base_metadata, "chunk_type": "sku"},
+                )
+            )
+
         for index, item in enumerate(knowledge.get("official_faq") or []):
             question = item.get("question", "")
             answer = item.get("answer", "")
@@ -61,33 +87,75 @@ class ProductChunker:
             elif rating <= 2:
                 negative_reviews.append(content)
 
-        if positive_reviews:
+        for i, review_text in enumerate(positive_reviews):
             chunks.append(
                 ProductChunk(
-                    id=f"{product.product_id}:review_positive",
+                    id=f"{product.product_id}:review_positive:{i}",
                     product_id=product.product_id,
                     chunk_type="review_positive",
-                    text=f"{product.title}\n好评：{'；'.join(positive_reviews)}",
+                    text=f"{product.title}\n好评：{review_text}",
                     metadata={**base_metadata, "chunk_type": "review_positive"},
                 )
             )
 
-        if negative_reviews:
+        for i, review_text in enumerate(negative_reviews):
             chunks.append(
                 ProductChunk(
-                    id=f"{product.product_id}:review_negative",
+                    id=f"{product.product_id}:review_negative:{i}",
                     product_id=product.product_id,
                     chunk_type="review_negative",
-                    text=f"{product.title}\n差评/缺点：{'；'.join(negative_reviews)}",
+                    text=f"{product.title}\n差评/缺点：{review_text}",
                     metadata={**base_metadata, "chunk_type": "review_negative"},
                 )
             )
 
         return chunks
 
+    @staticmethod
+    def _build_spec_text(product: Product) -> str:
+        knowledge = product.rag_knowledge or {}
+        specs = knowledge.get("specifications") or knowledge.get("specs")
+        if not specs:
+            return ""
+        if isinstance(specs, dict):
+            parts = [f"{k}：{v}" for k, v in specs.items() if v]
+            return "\n".join(parts)
+        if isinstance(specs, list):
+            parts = []
+            for item in specs:
+                if isinstance(item, dict):
+                    name = item.get("name") or item.get("key") or item.get("label", "")
+                    value = item.get("value") or item.get("val", "")
+                    if name and value:
+                        parts.append(f"{name}：{value}")
+                elif isinstance(item, str):
+                    parts.append(item)
+            return "\n".join(parts)
+        return str(specs) if specs else ""
+
+    @staticmethod
+    def _build_sku_text(product: Product) -> str:
+        knowledge = product.rag_knowledge or {}
+        skus = knowledge.get("skus") or knowledge.get("variants")
+        if not skus:
+            if product.base_price:
+                return f"价格：¥{product.base_price}"
+            return ""
+        if isinstance(skus, list):
+            parts = []
+            for sku in skus:
+                if isinstance(sku, dict):
+                    name = sku.get("name") or sku.get("variant_name") or sku.get("color") or sku.get("size", "")
+                    price = sku.get("price") or sku.get("sale_price") or ""
+                    if name or price:
+                        parts.append(f"{name}：¥{price}" if price else str(name))
+                elif isinstance(sku, str):
+                    parts.append(sku)
+            return "\n".join(parts)
+        return ""
+
     def chunk_products(self, products: list[Product]) -> list[ProductChunk]:
         chunks: list[ProductChunk] = []
         for product in products:
             chunks.extend(self.chunk_product(product))
         return chunks
-

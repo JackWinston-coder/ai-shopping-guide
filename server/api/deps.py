@@ -1,7 +1,7 @@
 from typing import Annotated
 
 import aiosqlite
-from fastapi import Depends
+from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError
 
@@ -14,22 +14,17 @@ from server.services.rag_service import RagService
 
 security = HTTPBearer(auto_error=False)
 
-_product_service_instance: ProductService | None = None
-_rag_service_instance: RagService | None = None
+
+def get_product_service(request: Request) -> ProductService:
+    if not hasattr(request.app.state, "product_service") or request.app.state.product_service is None:
+        request.app.state.product_service = ProductService()
+    return request.app.state.product_service
 
 
-def get_product_service() -> ProductService:
-    global _product_service_instance
-    if _product_service_instance is None:
-        _product_service_instance = ProductService()
-    return _product_service_instance
-
-
-def get_rag_service() -> RagService:
-    global _rag_service_instance
-    if _rag_service_instance is None:
-        _rag_service_instance = RagService(product_service=get_product_service())
-    return _rag_service_instance
+def get_rag_service(request: Request) -> RagService:
+    if not hasattr(request.app.state, "rag_service") or request.app.state.rag_service is None:
+        request.app.state.rag_service = RagService(product_service=get_product_service(request))
+    return request.app.state.rag_service
 
 
 async def get_db():

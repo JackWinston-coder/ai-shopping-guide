@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import json
 import logging
 from dataclasses import dataclass, field
-
-import aiosqlite
+from typing import TYPE_CHECKING
 
 from server.models.chat import ConversationState
 from server.models.cart import CartItem
@@ -10,6 +11,10 @@ from server.models.product import Product
 from server.services.cart_service import CartService
 from server.services.product_service import ProductService
 from server.services.session_service import SessionService
+
+if TYPE_CHECKING:
+    from server.services.rag_service import RagService
+    from server.services.order_service import OrderService
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +30,10 @@ class ConversationContext:
     conversation_state: ConversationState = ConversationState.IDLE
     summary_text: str | None = None
     metadata: dict = field(default_factory=dict)
+    product_service: ProductService | None = None
+    cart_service: CartService | None = None
+    rag_service: RagService | None = None
+    order_service: OrderService | None = None
 
 
 class ContextBuilder:
@@ -67,19 +76,15 @@ class ContextBuilder:
         )
 
     async def _load_messages(self, session_id: str) -> list[dict]:
-        cursor = await self.session_service.db.execute(
-            "SELECT * FROM messages WHERE session_id = ? ORDER BY created_at ASC",
-            (session_id,),
-        )
-        rows = await cursor.fetchall()
+        messages = await self.session_service.list_messages(session_id)
         return [
             {
-                "role": row["role"],
-                "content": row["content"],
-                "products_json": row["products_json"],
-                "tool_calls_json": row["tool_calls_json"],
+                "role": msg.role,
+                "content": msg.content,
+                "products_json": msg.products_json,
+                "tool_calls_json": msg.tool_calls_json,
             }
-            for row in rows
+            for msg in messages
         ]
 
     @staticmethod

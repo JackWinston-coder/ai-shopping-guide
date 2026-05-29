@@ -4,29 +4,6 @@ from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-DOMAIN_RULES: dict[str, dict] = {
-    "耳机": {
-        "sub_categories": ["耳机"],
-        "boost_terms": ["降噪", "无线"],
-        "hard_constraint_fields": ["title", "sub_category"],
-    },
-    "跑步": {
-        "sub_categories": ["跑步鞋", "徒步鞋", "篮球鞋"],
-        "boost_terms": ["缓震", "运动鞋", "运动", "训练", "轻量", "速干", "鞋"],
-        "hard_constraint_fields": ["title", "sub_category"],
-        "hard_constraint_match": ["鞋"],
-    },
-    "咖啡": {
-        "sub_categories": ["咖啡"],
-        "boost_terms": ["提神", "冲泡"],
-    },
-    "油皮": {
-        "sub_categories": [],
-        "boost_terms": ["控油", "清爽", "油脂", "毛孔"],
-    },
-}
-
-
 class Settings(BaseSettings):
     app_env: str = "development"
     zhipu_api_key: str = ""
@@ -67,7 +44,14 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    s = Settings()
+    if s.jwt_secret == "change-me-in-production":
+        import logging
+        logging.getLogger(__name__).warning(
+            "JWT_SECRET is using the default value 'change-me-in-production'. "
+            "Please set a secure secret in production via the JWT_SECRET environment variable."
+        )
+    return s
 
 
 settings = get_settings()

@@ -7,6 +7,15 @@ from server.errors import AppError, ERROR_PRODUCT_NOT_FOUND
 from server.models.product import Product
 
 
+def _sanitize_image_path(image_path: str) -> str:
+    if ".." in Path(image_path).parts:
+        return ""
+    resolved = Path(image_path)
+    if resolved.is_absolute():
+        return ""
+    return image_path
+
+
 class ProductService:
     def __init__(self, data_root: str | None = None):
         self.data_root = Path(data_root or settings.product_data_path)
@@ -16,7 +25,9 @@ class ProductService:
         items: list[Product] = []
         for path in sorted(self.data_root.glob("*/data/*.json")):
             data = json.loads(path.read_text(encoding="utf-8"))
-            items.append(Product.model_validate(data))
+            product = Product.model_validate(data)
+            product.image_path = _sanitize_image_path(product.image_path)
+            items.append(product)
         return items
 
     @cached_property

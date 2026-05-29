@@ -3,7 +3,7 @@ from uuid import uuid4
 import aiosqlite
 
 from server.errors import AppError, ERROR_SESSION_NOT_FOUND
-from server.models.session import Session
+from server.models.session import Session, SessionMessage
 
 
 class SessionService:
@@ -25,7 +25,10 @@ class SessionService:
             (user_id,),
         )
         rows = await cursor.fetchall()
-        return [self._row_to_session(row) for row in rows]
+        sessions = [self._row_to_session(row) for row in rows]
+        for session in sessions:
+            session.messages = await self.list_messages(session.id)
+        return sessions
 
     async def get_session(self, user_id: str, session_id: str) -> Session:
         cursor = await self.db.execute(
@@ -35,7 +38,9 @@ class SessionService:
         row = await cursor.fetchone()
         if row is None:
             raise AppError(ERROR_SESSION_NOT_FOUND, "Session not found", 404, {"session_id": session_id})
-        return self._row_to_session(row)
+        session = self._row_to_session(row)
+        session.messages = await self.list_messages(session.id)
+        return session
 
     async def get_session_by_id(self, session_id: str) -> Session | None:
         cursor = await self.db.execute(
@@ -45,7 +50,29 @@ class SessionService:
         row = await cursor.fetchone()
         if row is None:
             return None
-        return self._row_to_session(row)
+        session = self._row_to_session(row)
+        session.messages = await self.list_messages(session.id)
+        return session
+
+    async def list_messages(self, session_id: str) -> list[SessionMessage]:
+        cursor = await self.db.execute(
+            "SELECT * FROM messages WHERE session_id = ? ORDER BY created_at ASC",
+            (session_id,),
+        )
+        rows = await cursor.fetchall()
+        return [
+            SessionMessage(
+                id=row["id"],
+                session_id=row["session_id"],
+                role=row["role"],
+                content=row["content"],
+                products_json=row["products_json"],
+                tool_calls_json=row["tool_calls_json"],
+                tool_call_id=row["tool_call_id"],
+                created_at=row["created_at"],
+            )
+            for row in rows
+        ]
 
     async def add_message(
         self,
@@ -71,7 +98,6 @@ class SessionService:
         state: str | None = None,
         summary_text: str | None = None,
     ) -> Session:
-        await self.get_session(user_id, session_id)
         fields: list[str] = []
         values: list = []
         if title is not None:
@@ -86,17 +112,21 @@ class SessionService:
         if fields:
             fields.append("updated_at = CURRENT_TIMESTAMP")
             values.append(session_id)
-            await self.db.execute(
-                f"UPDATE sessions SET {', '.join(fields)} WHERE id = ?",
+            values.append(user_id)
+            cursor = await self.db.execute(
+                f"UPDATE sessions SET {', '.join(fields)} WHERE id = ? AND user_id = ?",
                 values,
             )
             await self.db.commit()
+            if cursor.rowcount == 0:
+                raise AppError(ERROR_SESSION_NOT_FOUND, "Session not found", 404, {"session_id": session_id})
         return await self.get_session(user_id, session_id)
 
     async def delete_session(self, user_id: str, session_id: str) -> None:
-        await self.get_session(user_id, session_id)
+        cursor = await self.db.execute("DELETE FROM sessions WHERE id = ? AND user_id = ?", (session_id, user_id))
+        if cursor.rowcount == 0:
+            raise AppError(ERROR_SESSION_NOT_FOUND, "Session not found", 404, {"session_id": session_id})
         await self.db.execute("DELETE FROM messages WHERE session_id = ?", (session_id,))
-        await self.db.execute("DELETE FROM sessions WHERE id = ? AND user_id = ?", (session_id, user_id))
         await self.db.commit()
 
     @staticmethod

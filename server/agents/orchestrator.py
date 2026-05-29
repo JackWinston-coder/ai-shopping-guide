@@ -14,6 +14,7 @@ from server.models.chat import (
     SSEEventType,
 )
 from server.services.session_service import SessionService
+from server.services.output_validator import OutputValidator
 from server.services.summary_service import SummaryService
 
 logger = logging.getLogger(__name__)
@@ -40,11 +41,13 @@ class AgentOrchestrator:
         agents: dict[str, BaseAgent],
         session_service: SessionService,
         summary_service: SummaryService,
+        output_validator: OutputValidator | None = None,
     ):
         self.router = router_agent
         self.agents = agents
         self.session_service = session_service
         self.summary_service = summary_service
+        self.output_validator = output_validator or OutputValidator()
 
     async def run(
         self,
@@ -56,6 +59,8 @@ class AgentOrchestrator:
         await self._save_user_message(context.session_id, user_message)
 
         full_response = []
+        product_cards: list[dict] = []
+        tool_results: list[dict] = []
 
         for i, route_result in enumerate(route_output.routes):
             target_agent = self.agents.get(route_result.target_agent)
@@ -74,6 +79,13 @@ class AgentOrchestrator:
                     yield event
                     if event.type == SSEEventType.TEXT_DELTA:
                         full_response.append(event.data.get("content", ""))
+                    elif event.type == SSEEventType.PRODUCT_CARDS:
+                        products = event.data.get("products", [])
+                        if isinstance(products, list):
+                            product_cards = products
+                            context.recent_product_cards = products
+                    elif event.type == SSEEventType.TOOL_RESULT:
+                        tool_results.append(event.data)
             except Exception as exc:
                 logger.error("Agent %s execution error: %s", route_result.target_agent, exc)
                 yield SSEEvent(type=SSEEventType.ERROR, data={"code": "AGENT_EXECUTION_ERROR", "message": str(exc)})
@@ -87,7 +99,20 @@ class AgentOrchestrator:
             await self._update_conversation_state(context, last_intent)
 
         response_text = "".join(full_response)
-        await self._save_assistant_message(context.session_id, response_text)
+        validation = self.output_validator.validate_product_references(response_text, product_cards)
+        if not validation.valid:
+            logger.warning("Assistant output validation failed: %s", validation.reason)
+            yield SSEEvent(
+                type=SSEEventType.ERROR,
+                data={"code": "OUTPUT_VALIDATION_ERROR", "message": validation.reason},
+            )
+            response_text = "我需要重新基于已检索到的商品组织推荐，避免引用未确认的商品信息。"
+        await self._save_assistant_message(
+            context.session_id,
+            response_text,
+            product_cards=product_cards,
+            tool_results=tool_results,
+        )
 
         summary = await self.summary_service.generate_if_needed(context.session_id, self.session_service)
         if summary is not None:
@@ -133,10 +158,22 @@ class AgentOrchestrator:
         except Exception as exc:
             logger.warning("Failed to save user message: %s", exc)
 
-    async def _save_assistant_message(self, session_id: str, content: str) -> None:
-        if not content.strip():
+    async def _save_assistant_message(
+        self,
+        session_id: str,
+        content: str,
+        product_cards: list[dict] | None = None,
+        tool_results: list[dict] | None = None,
+    ) -> None:
+        if not content.strip() and not product_cards and not tool_results:
             return
         try:
-            await self.session_service.add_message(session_id, "assistant", content)
+            await self.session_service.add_message(
+                session_id,
+                "assistant",
+                content,
+                products_json=json.dumps(product_cards, ensure_ascii=False) if product_cards else None,
+                tool_calls_json=json.dumps(tool_results, ensure_ascii=False) if tool_results else None,
+            )
         except Exception as exc:
             logger.warning("Failed to save assistant message: %s", exc)

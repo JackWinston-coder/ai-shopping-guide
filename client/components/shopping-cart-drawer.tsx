@@ -24,8 +24,8 @@ interface ShoppingCartDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   items: CartItem[]
-  onUpdateQuantity: (id: string, quantity: number) => void
-  onRemoveItem: (id: string) => void
+  onUpdateQuantity: (id: string, quantity: number) => void | Promise<void>
+  onRemoveItem: (id: string) => void | Promise<void>
 }
 
 function CartItemCard({
@@ -34,8 +34,8 @@ function CartItemCard({
   onRemoveItem,
 }: {
   item: CartItem
-  onUpdateQuantity: (id: string, quantity: number) => void
-  onRemoveItem: (id: string) => void
+  onUpdateQuantity: (id: string, quantity: number) => void | Promise<void>
+  onRemoveItem: (id: string) => void | Promise<void>
 }) {
   const [isAnimating, setIsAnimating] = React.useState(false)
 
@@ -53,7 +53,6 @@ function CartItemCard({
           src={item.image}
           alt={item.title}
           className="w-full h-full object-cover"
-          crossOrigin="anonymous"
         />
       </div>
 

@@ -6,87 +6,19 @@ import {
   ArrowLeft,
   Search,
   Calendar,
-  Package,
+  MessageSquare,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import { ensureToken, fetchChatSessions } from '@/lib/api'
+import type { ChatSession } from '@/lib/types'
+import { toast } from 'sonner'
 
-interface HistoryCard {
-  id: string
-  title: string
-  userPreview: string
-  aiPreview: string
-  date: string
-  itemCount: number
-  category: string
-  thumbnail: string
-}
+function HistoryCardItem({ session, onClick }: { session: ChatSession; onClick: () => void }) {
+  const firstUserMessage = session.messages.find((message) => message.role === 'user')
+  const firstAssistantMessage = session.messages.find((message) => message.role === 'assistant')
+  const productCount = session.messages.reduce((count, message) => count + (message.products?.length || 0), 0)
 
-const demoHistory: HistoryCard[] = [
-  {
-    id: 'h1',
-    title: '推荐好用的护肤品',
-    userPreview: '推荐一些好用的护肤品和数码产品',
-    aiPreview: '为你找到以下热门商品，涵盖护肤和数码领域...',
-    date: '2026-05-25',
-    itemCount: 3,
-    category: '美妆护肤',
-    thumbnail: '/data/1_美妆护肤/images/p_beauty_001_live.jpg',
-  },
-  {
-    id: 'h2',
-    title: '性价比高的手机推荐',
-    userPreview: '想买一款性价比高的手机',
-    aiPreview: '为你推荐以下高性价比智能手机...',
-    date: '2026-05-24',
-    itemCount: 2,
-    category: '数码电子',
-    thumbnail: '/data/2_数码电子/images/p_digital_001_live.jpg',
-  },
-  {
-    id: 'h3',
-    title: '出差需要买哪些东西',
-    userPreview: '出差需要买哪些东西',
-    aiPreview: '出差必备好物清单来了，涵盖收纳...',
-    date: '2026-05-24',
-    itemCount: 5,
-    category: '跨类目',
-    thumbnail: '/data/2_数码电子/images/p_digital_002_live.jpg',
-  },
-  {
-    id: 'h4',
-    title: '夏天穿的透气T恤',
-    userPreview: '夏天穿的透气T恤有哪些推荐',
-    aiPreview: '这几款T恤透气清凉，非常适合夏天...',
-    date: '2026-05-23',
-    itemCount: 4,
-    category: '服饰运动',
-    thumbnail: '/data/3_服饰运动/images/p_clothes_001_live.jpg',
-  },
-  {
-    id: 'h5',
-    title: '热门零食推荐',
-    userPreview: '有什么好吃又实惠的零食推荐',
-    aiPreview: '为你筛选了以下好吃又实惠的零食...',
-    date: '2026-05-22',
-    itemCount: 2,
-    category: '食品饮料',
-    thumbnail: '/data/4_食品饮料/images/p_food_001_live.jpg',
-  },
-  {
-    id: 'h6',
-    title: '抗初老精华推荐',
-    userPreview: '25岁用什么抗初老精华好',
-    aiPreview: '为你推荐以下适合25+的抗初老精华...',
-    date: '2026-05-21',
-    itemCount: 3,
-    category: '美妆护肤',
-    thumbnail: '/data/1_美妆护肤/images/p_beauty_002_live.jpg',
-  },
-]
-
-function HistoryCardItem({ card, onClick }: { card: HistoryCard; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
@@ -94,26 +26,26 @@ function HistoryCardItem({ card, onClick }: { card: HistoryCard; onClick: () => 
     >
       <div className="h-1 bg-gradient-to-r from-purple-500 to-indigo-500" />
       <div className="p-4 space-y-3">
-        <h3 className="text-sm font-medium line-clamp-2 text-foreground">{card.userPreview}</h3>
-        <p className="text-xs text-muted-foreground line-clamp-1">{card.aiPreview}</p>
+        <h3 className="text-sm font-medium line-clamp-2 text-foreground">
+          {firstUserMessage?.content || session.title}
+        </h3>
+        <p className="text-xs text-muted-foreground line-clamp-1">
+          {firstAssistantMessage?.content || session.preview}
+        </p>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">
               <Calendar className="size-3" />
-              {card.date}
+              {session.timestamp}
             </span>
             <span className="flex items-center gap-1">
-              <Package className="size-3" />
-              {card.itemCount}件商品
+              <MessageSquare className="size-3" />
+              {session.messages.length} 条消息
             </span>
           </div>
-          <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
-            <img
-              src={card.thumbnail}
-              alt={card.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <span className="text-xs text-muted-foreground">
+            {productCount > 0 ? `${productCount} 件商品` : '未推荐商品'}
+          </span>
         </div>
       </div>
     </button>
@@ -123,14 +55,24 @@ function HistoryCardItem({ card, onClick }: { card: HistoryCard; onClick: () => 
 export default function HistoryPage() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = React.useState('')
+  const [sessions, setSessions] = React.useState<ChatSession[]>([])
+  const [isLoading, setIsLoading] = React.useState(true)
 
-  const filteredCards = demoHistory.filter(card => {
+  React.useEffect(() => {
+    ensureToken()
+      .then(fetchChatSessions)
+      .then(setSessions)
+      .catch((error) => toast.error(error instanceof Error ? error.message : '历史会话加载失败'))
+      .finally(() => setIsLoading(false))
+  }, [])
+
+  const filteredSessions = sessions.filter((session) => {
     if (!searchQuery.trim()) return true
     const q = searchQuery.toLowerCase()
     return (
-      card.userPreview.toLowerCase().includes(q) ||
-      card.aiPreview.toLowerCase().includes(q) ||
-      card.category.toLowerCase().includes(q)
+      session.title.toLowerCase().includes(q) ||
+      session.preview.toLowerCase().includes(q) ||
+      session.messages.some((message) => message.content.toLowerCase().includes(q))
     )
   })
 
@@ -155,18 +97,23 @@ export default function HistoryPage() {
           />
         </div>
 
-        {filteredCards.length === 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <MessageSquare className="size-12 text-muted-foreground/50 mb-4 animate-pulse" />
+            <p className="text-muted-foreground">正在加载历史对话...</p>
+          </div>
+        ) : filteredSessions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <Search className="size-12 text-muted-foreground/50 mb-4" />
             <p className="text-muted-foreground">没有找到匹配的对话</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredCards.map((card) => (
+            {filteredSessions.map((session) => (
               <HistoryCardItem
-                key={card.id}
-                card={card}
-                onClick={() => router.push('/chat')}
+                key={session.id}
+                session={session}
+                onClick={() => router.push(`/chat?session=${session.id}`)}
               />
             ))}
           </div>

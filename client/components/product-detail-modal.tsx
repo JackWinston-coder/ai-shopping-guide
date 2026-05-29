@@ -21,12 +21,14 @@ interface ProductDetailModalProps {
   product: Product | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  onAddToCart?: (product: Product) => void | Promise<void>
 }
 
 export function ProductDetailModal({
   product,
   open,
   onOpenChange,
+  onAddToCart,
 }: ProductDetailModalProps) {
   const [selectedSku, setSelectedSku] = React.useState<Sku | null>(null)
   const [quantity, setQuantity] = React.useState(1)
@@ -54,16 +56,12 @@ export function ProductDetailModal({
     skuOptionsByProperty[key] = [...new Set(product.skus.map(s => s.properties[key]))]
   })
 
-  const [selectedProperties, setSelectedProperties] = React.useState<Record<string, string>>(() => {
-    if (product.skus.length > 0) {
-      return { ...product.skus[0].properties }
-    }
-    return {}
-  })
+  const [selectedProperties, setSelectedProperties] = React.useState<Record<string, string>>({})
 
   React.useEffect(() => {
     if (open && product && product.skus.length > 0) {
       setSelectedProperties({ ...product.skus[0].properties })
+      setQuantity(1)
     }
   }, [open, product?.id])
 
@@ -190,6 +188,7 @@ export function ProductDetailModal({
 
             <Button
               className="w-full h-12 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-base font-medium"
+              onClick={() => onAddToCart?.(product)}
             >
               <ShoppingCart className="size-5 mr-2" />
               加入购物车

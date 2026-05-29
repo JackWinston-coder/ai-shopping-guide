@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     phone TEXT UNIQUE,
     email TEXT UNIQUE,
+    password_hash TEXT NOT NULL,
     nickname TEXT NOT NULL,
     avatar TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -82,6 +83,8 @@ async def init_db() -> None:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     _db_connection = await aiosqlite.connect(db_path)
     _db_connection.row_factory = aiosqlite.Row
+    await _db_connection.execute("PRAGMA journal_mode=WAL")
+    await _db_connection.execute("PRAGMA busy_timeout=5000")
     await _db_connection.executescript(SCHEMA_SQL)
     await _db_connection.commit()
 

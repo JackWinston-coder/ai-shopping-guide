@@ -1,12 +1,14 @@
 import asyncio
 import hashlib
 import math
+from collections import deque
 from datetime import datetime
 from typing import Any, AsyncIterator
 
 from pydantic import BaseModel
 
-from server.config import DOMAIN_RULES, settings
+from server.config import settings
+from server.rag.query_profile import DOMAIN_QUERY_RULES
 
 
 class APICallRecord(BaseModel):
@@ -22,7 +24,7 @@ MAX_CALL_RECORDS = 1000
 
 _DOMAIN_KEYWORD_INDICES: dict[str, int] = {}
 _next_index = 0
-for _kw in DOMAIN_RULES:
+for _kw in DOMAIN_QUERY_RULES:
     _DOMAIN_KEYWORD_INDICES[_kw] = _next_index
     _next_index += 1
 
@@ -37,7 +39,7 @@ class ZhipuClient:
         self.api_key = api_key if api_key is not None else settings.zhipu_api_key
         self.llm_model = llm_model or settings.zhipu_llm_model
         self.embedding_model = embedding_model or settings.zhipu_embedding_model
-        self._call_records: list[APICallRecord] = []
+        self._call_records: deque[APICallRecord] = deque(maxlen=MAX_CALL_RECORDS)
         self._client = None
         if self.api_key:
             from zhipuai import ZhipuAI
@@ -74,6 +76,31 @@ class ZhipuClient:
             )
         )
         return response
+
+    def chat_sync(
+        self,
+        messages: list[dict],
+        tools: list[dict] | None = None,
+        model: str | None = None,
+        temperature: float = 0.7,
+        max_tokens: int = 2048,
+    ) -> str | None:
+        if self._client is None:
+            return None
+        try:
+            response = self._client.chat.completions.create(
+                model=model or self.llm_model,
+                messages=messages,
+                tools=tools,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            choice = response.choices[0] if response.choices else None
+            if choice and choice.message:
+                return choice.message.content
+        except Exception:
+            pass
+        return None
 
     async def chat_stream(
         self,
@@ -178,38 +205,44 @@ class ZhipuClient:
 
     def _record_call(self, record: APICallRecord) -> None:
         self._call_records.append(record)
-        if len(self._call_records) > MAX_CALL_RECORDS:
-            self._call_records = self._call_records[-MAX_CALL_RECORDS:]
 
     def _local_embed(self, text: str) -> list[float]:
         dimensions = settings.local_embedding_dimensions
         vector = [0.0] * dimensions
         normalized = "".join(text.lower().split())
-        tokens = self._tokenize_for_local_embedding(normalized)
-        for token in tokens:
-            digest = hashlib.sha256(token.encode("utf-8")).digest()
+
+        import jieba
+        words = [w for w in jieba.cut(text) if w.strip()]
+        for word in words:
+            digest = hashlib.sha256(f"w:{word}".encode("utf-8")).digest()
             index = int.from_bytes(digest[:4], "big") % dimensions
             sign = 1.0 if digest[4] % 2 == 0 else -1.0
-            vector[index] += sign
-        for char in normalized:
-            if char.strip():
-                digest = hashlib.sha256(f"c:{char}".encode("utf-8")).digest()
-                index = int.from_bytes(digest[:4], "big") % dimensions
-                vector[index] += 0.8
+            weight = min(1.0 + math.log2(len(word)), 2.0)
+            vector[index] += sign * weight
+            for i in range(min(len(word) - 1, 2)):
+                sub = word[: i + 2]
+                sub_digest = hashlib.sha256(f"s:{sub}".encode("utf-8")).digest()
+                sub_index = int.from_bytes(sub_digest[:4], "big") % dimensions
+                vector[sub_index] += 0.4
+
         for index in range(max(len(normalized) - 1, 0)):
             bigram = normalized[index : index + 2]
             digest = hashlib.sha256(f"b:{bigram}".encode("utf-8")).digest()
-            vector[int.from_bytes(digest[:4], "big") % dimensions] += 0.6
+            vector[int.from_bytes(digest[:4], "big") % dimensions] += 0.3
+
         for keyword, vec_index in _DOMAIN_KEYWORD_INDICES.items():
             if keyword in text and vec_index < dimensions:
                 vector[vec_index] += 1.5
+
         norm = math.sqrt(sum(value * value for value in vector)) or 1.0
         return [value / norm for value in vector]
 
     @staticmethod
     def _tokenize_for_local_embedding(text: str) -> list[str]:
-        tokens: list[str] = []
-        tokens.extend(char for char in text if not char.isspace())
-        tokens.extend(text[index : index + 2] for index in range(max(len(text) - 1, 0)))
-        tokens.extend(text[index : index + 3] for index in range(max(len(text) - 2, 0)))
+        import jieba
+        words = [w for w in jieba.cut(text) if w.strip()]
+        tokens: list[str] = list(words)
+        for word in words:
+            for i in range(min(len(word) - 1, 2)):
+                tokens.append(word[: i + 2])
         return tokens or [text]

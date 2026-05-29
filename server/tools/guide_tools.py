@@ -20,9 +20,10 @@ async def search_products(
     context: ConversationContext | None = None,
     rag_service: RagService | None = None,
 ) -> dict:
+    if rag_service is None and context is not None:
+        rag_service = context.rag_service
     if rag_service is None:
-        from server.api.deps import get_rag_service
-        rag_service = get_rag_service()
+        rag_service = RagService()
     results = await rag_service.search(
         query=query,
         category=category,
@@ -54,9 +55,10 @@ async def get_product_detail(
     context: ConversationContext | None = None,
     product_service: ProductService | None = None,
 ) -> dict:
+    if product_service is None and context is not None:
+        product_service = context.product_service
     if product_service is None:
-        from server.api.deps import get_product_service
-        product_service = get_product_service()
+        product_service = ProductService()
     try:
         product = product_service.get_product(product_id)
     except Exception:
@@ -92,9 +94,10 @@ async def compare_products(
     context: ConversationContext | None = None,
     product_service: ProductService | None = None,
 ) -> dict:
+    if product_service is None and context is not None:
+        product_service = context.product_service
     if product_service is None:
-        from server.api.deps import get_product_service
-        product_service = get_product_service()
+        product_service = ProductService()
     products = []
     for pid in product_ids[:4]:
         try:

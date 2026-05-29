@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 
 class SSEEventType(str, Enum):
+    SESSION = "session"
     TEXT_DELTA = "text_delta"
     PRODUCT_CARDS = "product_cards"
     TOOL_RESULT = "tool_result"

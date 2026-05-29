@@ -6,6 +6,10 @@ class Embedder:
         self.client = client or ZhipuClient()
         self.batch_size = batch_size
 
+    @property
+    def model_name(self) -> str:
+        return self.client.embedding_model
+
     async def embed(self, text: str) -> list[float]:
         return (await self.client.embed([text]))[0]
 

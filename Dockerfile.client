@@ -8,6 +8,7 @@ RUN npm config set registry https://registry.npmmirror.com && npm install -g pnp
 COPY client/ ./
 
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_API_URL=http://123.207.251.110:8000
 
 RUN pnpm build
 
@@ -15,7 +16,6 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV NEXT_PUBLIC_API_URL=http://123.207.251.110:8000
 
 COPY --from=base /app/next.config.mjs ./
 COPY --from=base /app/public ./public

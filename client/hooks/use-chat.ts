@@ -3,6 +3,17 @@
 import * as React from 'react'
 import { toast } from 'sonner'
 import type { CartItem, ChatSession, Message, Product } from '@/lib/types'
+
+function generateId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 15) >> (c === 'x' ? 0 : 2)
+    const v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
 import {
   addCartItem,
   createChatSession,
@@ -161,7 +172,7 @@ export function useChatStream(
     const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
 
     const userMessage: Message = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       role: 'user',
       content: input.trim() || '请根据这张图片帮我找相似商品',
       timestamp,
@@ -176,7 +187,7 @@ export function useChatStream(
     setIsLoading(true)
 
     const streamingMessage: Message = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       role: 'assistant',
       content: '',
       timestamp,
